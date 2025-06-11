@@ -1,10 +1,18 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-create(){
-  dir=$(dirname "$1")
-  mkdir -p "$dir" && touch "$1"
+#ensure_path func
+create() {
+  if [[ "$1" == */ ]]; then
+    # If the input ends with a slash, create directories
+    mkdir -p "$1"
+  else
+    # Otherwise, create the file and its directory structure
+    dir=$(dirname "$1")
+    mkdir -p "$dir" && touch "$1"
+  fi
 }
+
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
