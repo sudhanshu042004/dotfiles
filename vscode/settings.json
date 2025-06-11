@@ -1,0 +1,18 @@
+{
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    },
+    "editor.mouseWheelZoom": true,
+    "code-runner.runInTerminal": true,
+    "code-runner.saveFileBeforeRun": true,
+    "liveServer.settings.donotShowInfoMsg": true,
+    "workbench.iconTheme": "material-icon-theme",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "git.openRepositoryInParentFolders": "always",
+    "editor.fontFamily": "'Maple Mono', 'monospace', monospace",
+    "editor.fontSize": 14,
+    "editor.fontWeight": "normal",
+    "editor.fontLigatures": false,
+    "terminal.integrated.inheritEnv": false
+}
