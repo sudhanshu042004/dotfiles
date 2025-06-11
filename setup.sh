@@ -20,6 +20,17 @@ TOTAL_STEPS=9
 CURRENT_STEP=1
 
 install_if_missing() {
+  GREEN="\033[1;32m"
+  YELLOW="\033[1;33m"
+  RED="\033[1;31m"
+  BLUE="\033[1;34m"
+  NC="\033[0m"
+
+  info()    { echo -e "${BLUE}[INFO]${NC} $1"; }
+  success() { echo -e "${GREEN}[OK]${NC}   $1"; }
+  warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
+  error()   { echo -e "${RED}[ERR]${NC}  $1"; }
+
   local pkg="$1"
   if ! pacman -Q "$pkg" &>/dev/null; then
     info "Installing $pkg..."
