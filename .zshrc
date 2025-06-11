@@ -1,6 +1,10 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
+#core and auth packages file path
+CORE_FILE="$HOME/dotfiles/packages/core.txt"
+AUR_FILE="$HOME/dotfiles/packages/aur.txt"
+
 #ensure_path func
 create() {
   if [[ "$1" == */ ]]; then
@@ -12,6 +16,90 @@ create() {
     mkdir -p "$dir" && touch "$1"
   fi
 }
+
+#install package
+ins() {
+  if [[ -n "$1" ]]; then
+    pkg="$1"
+  else
+    echo -n "Package name: "
+    read pkg
+  fi
+
+  if pacman -Si "$pkg" &>/dev/null; then
+    # file="$HOME/dotfiles/packages/core.txt"
+    if ! grep -qxF "$pkg" "$CORE_FILE"; then
+      echo "$pkg" >> "$CORE_FILE"
+      echo "✅ Added $pkg to core.txt"
+    else
+      echo "⚠️  $pkg already in core.txt"
+    fi
+
+    echo "📦 Installing $pkg using pacman..."
+    if sudo pacman -S --noconfirm "$pkg"; then
+      echo "✅ Installed $pkg"
+    else
+      echo "❌ Failed to install $pkg with pacman"
+    fi
+
+  else
+    echo -n "Package $pkg not found in core. Add to aur.txt? [Y/n]: "
+    read ans
+    if [[ "${ans:l}" != "n" ]]; then
+      # file="$HOME/dotfiles/packages/aur.txt"
+      if ! grep -qxF "$pkg" "$AUR_FILE"; then
+        echo "$pkg" >> "$AUR_FILE"
+        echo "✅ Added $pkg to aur.txt"
+      else
+        echo "⚠️  $pkg already in aur.txt"
+      fi
+
+      echo "🔍 Checking if $pkg exists in AUR..."
+      if paru -Si "$pkg" &>/dev/null; then
+        echo "📦 Installing $pkg using paru..."
+        if paru -S --noconfirm "$pkg"; then
+          echo "✅ Installed $pkg"
+        else
+          echo "❌ Failed to install $pkg from AUR"
+        fi
+      else
+        echo "❌ Package '$pkg' not found in AUR. Removing from aur.txt..."
+        sed -i "/^$pkg$/d" "$AUR_FILE"
+      fi
+    else
+      echo "❌ Skipped adding $pkg"
+    fi
+  fi
+}
+
+# remove package
+rem() {
+  if [[ -z "$1" ]]; then
+    echo "❌ Usage: rm_pkg <package-name>"
+    return 1
+  fi
+
+  pkg="$1"
+
+  # Check if installed
+  if pacman -Q "$pkg" &>/dev/null; then
+    echo "📦 Uninstalling $pkg..."
+    sudo pacman -Rns --noconfirm "$pkg" && echo "✅ Removed $pkg from system"
+  else
+    echo "⚠️  $pkg is not installed"
+  fi
+
+  # Remove from core.txt or aur.txt
+  if grep -qxF "$pkg" "$CORE_FILE"; then
+    sed -i "/^$pkg$/d" "$CORE_FILE" && echo "🗑️  Removed $pkg from core.txt"
+  fi
+
+  if grep -qxF "$pkg" "$AUR_FILE"; then
+    sed -i "/^$pkg$/d" "$AUR_FILE" && echo "🗑️  Removed $pkg from aur.txt"
+  fi
+}
+
+
 
 
 # Path to your Oh My Zsh installation.

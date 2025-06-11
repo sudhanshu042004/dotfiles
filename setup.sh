@@ -33,24 +33,35 @@ else
   warn "paru already installed. Skipping."
 fi
 
-# === STEP 2: INSTALL PACKAGES ===
-PACKAGES=(
-  google-chrome
-  kitty
-  eog
-  spectacle
-  visual-studio-code-bin
-  zsh
-  obsidian
-  neofetch
-  htop
-  btop
-  neovim
-)
+# === STEP 2.: INSTALL PACKAGES FROM core.txt and aur.txt ===
+CORE_FILE="$HOME/dotfiles/packages/core.txt"
+AUR_FILE="$HOME/dotfiles/packages/aur.txt"
 
-for pkg in "${PACKAGES[@]}"; do
-  install_if_missing "$pkg"
-done
+log "Installing packages from core.txt..."
+if [[ -f "$CORE_FILE" ]]; then
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" || "$pkg" == \#* ]] && continue
+    install_if_missing "$pkg"
+  done < "$CORE_FILE"
+else
+  warn "core.txt not found. Skipping core packages."
+fi
+
+log "Installing packages from aur.txt..."
+if [[ -f "$AUR_FILE" ]]; then
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" || "$pkg" == \#* ]] && continue
+    if ! pacman -Q "$pkg" &>/dev/null; then
+      log "Installing $pkg from AUR..."
+      paru -S --noconfirm "$pkg" || err "Failed to install $pkg from AUR"
+    else
+      warn "$pkg already installed. Skipping."
+    fi
+  done < "$AUR_FILE"
+else
+  warn "aur.txt not found. Skipping AUR packages."
+fi
+
 
 # === STEP 3: ZSH SETUP ===
 if [[ "$SHELL" == *"bash" ]]; then

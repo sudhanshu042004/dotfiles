@@ -1,0 +1,13 @@
+# all aur packages
+
+google-chrome
+kitty
+eog
+spectacle
+visual-studio-code-bin
+zsh
+obsidian
+neofetch
+htop
+btop
+neovim
