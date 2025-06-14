@@ -1,3 +1,6 @@
 # all core packages
 
 net-tools
+ntfs-3g
+docker
+tree

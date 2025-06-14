@@ -11,3 +11,4 @@ neofetch
 htop
 btop
 neovim
+cursor-bin
